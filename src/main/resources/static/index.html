@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>BIMFACE-工程文件的在线浏览及数据服务</title>
+    <meta name="keywords" content="BIMFACE,BIM,模型,轻量化,模型轻量化,建筑,工程文件,Revit,CAD,SketchUp,Navisworks,3ds Max"/>
+    <meta name="description"
+          content="BIMFACE面向工程建筑领域，提供了Revit模型、CAD图纸等多种工程文件的轻量化浏览及数据服务。 建筑领域的开发者，可以基于BIMFACE的基础服务，根据最终用户的需求，开发出贴合特定场景的应用。"/>
+    <link rel="shortcut icon" href="https://static.bimface.com/favicon.ico" type="image/x-icon"/>
+    <link rel="icon" href="https://static.bimface.com/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="resource/css/example-common.css">
+    <link rel="stylesheet" href="resource/css/meeting.css">
+</head>
+<body>
+
+<header>
+    <a href="http://bimface.com/" class="logo"></a>
+    <h2>BIM远程会议<i>官方示例</i></h2>
+    <div class="btn-box">
+        <a href="#" target="_blank" class="btn btn-sm btn-primary">源代码</a>
+        <a href="#" class="btn btn-sm btn-primary">详情介绍</a>
+    </div>
+</header>
+
+
+<div class="container">
+    <div class="file-box">
+        <div class="tit">会议文件（4）</div>
+        <ul class="file-list">
+            <li data-id="450f1742">水泵示例.rvt</li>
+            <li data-id="12b53f51">前滩办公室.rvt</li>
+            <li data-id="cab9a823">宋代古建筑.skp</li>
+            <li data-id="9af9e1b8">空调水平面图.dwg</li>
+        </ul>
+    </div>
+
+    <div class="user-box">
+        <div class="tit">当前参会人员<span id="userNum"></span></div>
+        <ul class="user-list"></ul>
+        <div class="apply">
+            <a href="javascript:void(0)" class="btn btn-md btn-primary btn-disable2" id="btnApply">申请主持人</a>
+            <a href="javascript:void(0)" class="btn btn-md btn-yellow" id="inviteBtn">邀请他人</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div id="view"></div>
+
+        <div class="side">
+            <ul class="chat"></ul>
+            <div class="enter-box">
+                <textarea placeholder="最多输入150个字" maxlength="150" id="comment" onkeypress="EnterPress()"></textarea>
+                <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="btnSendMsg">发送</a>
+                <a href="javascript:void(0)" class="btnEmpty">清空</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="w1200">
+        <div class="copyright">
+            Copyright &copy;2016-2018 <a href="http://bimface.com" target="_blank">BIMFACE</a> 京ICP备10021606号-19 <a href="http://www.glodon.com/" target="_blank">广联达</a>旗下产品
+        </div>
+    </div>
+</footer>
+
+<div class="popup-mask"></div>
+<div class="popup" id="joinBim" style="width:300px;">
+    <div class="tit">加入BIM会议室</div>
+    <div class="content">
+        <p>您正在加入BIM会议室</p>
+        <input type="text" id="name" placeholder="请输入您的姓名"/>
+        <div class="btn-box">
+            <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="joinBtn">加入会议</a>
+        </div>
+    </div>
+</div>
+
+<div class="popup" id="sharePopup" style="width:300px;">
+    <a href="javascript:void(0)" class="close closeBtn">×</a>
+    <div class="tit">邀请他人</div>
+    <div class="content">
+        <input type="text" id="shareUrl"/>
+        <div class="btn-box">
+            <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="copyBtn">复制并关闭</a>
+        </div>
+    </div>
+</div>
+
+<div class="popup" id="transferPopup" style="width:300px;">
+    <a href="javascript:void(0)" class="close closeBtn">×</a>
+    <div class="tit">移交主持人</div>
+    <div class="content">
+        <p>确认将主持人移交给"<span id="transferName"></span>"吗？</p>
+        <div class="btn-box">
+            <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="transferBtn">确认</a>
+            <a href="javascript:void(0)" class="btn btn-sm btn-default closeBtn">取消</a>
+        </div>
+    </div>
+</div>
+
+<div class="popup" id="applyPopup" style="width:500px;">
+    <a href="javascript:void(0)" class="close closeBtn">×</a>
+    <div class="tit">申请主持人</div>
+    <div class="content">
+        <p style="text-indent: 2em;">申请为会议主持人，您可以对模型的操作，例如平移、旋转，会同步到其他参会人员的屏幕中。为了让大家都体验该示例的功能，每次主持的时间最多为5分钟。</p>
+        <div class="btn-box">
+            <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="submitApply">确认</a>
+            <a href="javascript:void(0)" class="btn btn-sm btn-default closeBtn">取消</a>
+        </div>
+    </div>
+</div>
+
+<div class="popup" id="successPopup" style="width:500px;">
+    <a href="javascript:void(0)" class="close closeBtn">×</a>
+    <div class="tit">成为主持人</div>
+    <div class="content">
+        <p style="color:#11dab7; text-align: center">您已成为会议的主持人</p>
+        <p style="text-indent: 2em;">您可以对模型的操作，例如平移、旋转，会同步到其他参会人员的屏幕中。为了让大家都体验该示例的功能，每次主持的时间最多为5分钟。</p>
+        <div class="btn-box">
+            <a href="javascript:void(0)" class="btn btn-sm btn-primary closeBtn">我知道了</a>
+        </div>
+    </div>
+</div>
+
+<div class="popup" id="overPopup" style="width:300px;">
+    <a href="javascript:void(0)" class="close closeBtn">×</a>
+    <div class="tit">主持结束</div>
+    <div class="content">
+        <p style="text-indent: 2em;">5分钟主持人体验已结束，如需继续体验，可重新申请主持人。</p>
+        <div class="btn-box">
+            <a href="javascript:void(0)" class="btn btn-sm btn-primary closeBtn">我知道了</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://static.bimface.com/developer/libs/jquery.js"></script>
+<script src="https://static.bimface.com/api/BimfaceSDKLoader/BimfaceSDKLoader@latest-release.js"
+        charset="utf-8"></script>
+<script src="webjars/sockjs-client/sockjs.js" charset="utf-8"></script>
+<script src="webjars/stomp-websocket/stomp.min.js" charset="utf-8"></script>
+<script>
+    $(function () {
+        var modelHeight = window.innerHeight - 105;
+        $('.container').height((modelHeight - 40) + 'px');
+        $('.user-list').height((modelHeight - 220 - 110 - 80 -30) + 'px');
+        $('.chat').height((modelHeight -40 - 150 - 20) + 'px');
+        $('#shareUrl').val(window.location.href);
+
+        Model.init();
+
+        $('.file-list li').click(function () {
+            if (userInfo.role == 1) {
+                var _id = $(this).attr('data-id');
+                var _index = $(this).index();
+                Model.initializeBimfaceViewer(_id);
+                Model.updateCurrentFileStyle(_id);
+                Model.updateModel(_index);
+                $.ajax({
+                    type: "PUT",
+                    url: 'file/nonce?fileId=' + _id,
+                    success: function (res) {
+                    }
+                });
+            }
+        })
+
+        $('#btnApply').click(function () {
+            if (Model.isAble) {
+                $('#applyPopup').show();
+                $('.popup-mask').show();
+            }
+        })
+        $('#submitApply').click(function () {
+            $.ajax({
+                type: "POST",
+                url: 'compere',
+                success: function (res) {
+                    Model.closePopup();
+                }
+            });
+        })
+
+        $('.btnEmpty').click(function () {
+            $('#comment').val('');
+        })
+        $('#btnSendMsg').click(function () {
+            var _text = $('#comment').val();
+            if (_text.trim().length > 0) {
+                stompClient.send("/message", {}, _text);
+                $('#comment').val('');
+            }
+        })
+
+        $('body').on('click', '.user-list i', function () {
+            if (userInfo.role == 1) {
+                var _name = $(this).parent().text();
+                var _id = $(this).attr('data-id');
+                $('#transferName').html(_name).attr('data-id', _id);
+                $('#transferPopup').show();
+                $('.popup-mask').show();
+            }
+        })
+        $('#transferBtn').click(function () {
+            $.ajax({
+                type: "PUT",
+                url: 'compere?id=' + $('#transferName').attr('data-id'),
+                success: function () {
+//                    Model.closePopup();
+                }
+            });
+        })
+
+    })
+
+    var Model = {
+        isAble: false,
+        init: function () {
+            $('.popup .closeBtn').click(function () {
+                Model.closePopup();
+            })
+
+            Model.userInit();
+            Model.joinInit();
+            Model.shareInit();
+            Model.chatScroll();
+        },
+
+        closePopup: function () {
+            $('.popup').hide();
+            $('.popup-mask').hide();
+        },
+
+        joinInit: function () {
+            $('#joinBtn').click(function () {
+                var _name = $('#name').val().trim();
+                if (_name.length > 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "login",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify({"name": _name}),
+                        success: function (res) {
+                            if (res.code === "success") {
+                                window.userInfo = res.data;
+                                Model.updateUserList();
+                                Model.closePopup();
+                                Model.getCurrentFile();
+                                Model.isMasterClass();
+                            }
+                        }
+                    });
+
+                }
+            })
+        },
+
+        clientInit: function () {
+            window.stompClient = Stomp.client('ws://' + window.location.host + '/eg-meeting/websocket');
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe("/msg", function (msg) {
+                    Model.updateMessage(JSON.parse(msg.body));
+                })
+                stompClient.subscribe("/command", function (command) {
+                    var _type = JSON.parse(command.body).type;
+                    if (_type == "refreshUserCommand") {
+                        var _obj = JSON.parse(command.body);
+                        Model.updateUserDom(_obj.content);
+                    } else if (_type == "refreshFileCommand") {
+                        if (userInfo.role == 0) {
+                            var _obj = JSON.parse(command.body);
+                            Model.initializeBimfaceViewer(_obj.content);
+                            Model.updateCurrentFileStyle(_obj.content);
+                        }
+                    } else if (_type == 'refreshRoleCommand') {
+                        Model.isAble = false;
+                        $('#btnApply').addClass('btn-disable2');
+                        Model.updateUserList();
+                        Model.isMasterStyle(JSON.parse(command.body).content, false);
+                    } else if (_type == 'noCompereCommand') {
+                        Model.isAble = true;
+                        $('#btnApply').removeClass('btn-disable2');
+                        Model.updateUserList();
+                        var user = JSON.parse(command.body).content;
+                        if (user !== null && user.id === userInfo.id) {
+                            userInfo.role = 0;
+                            $('.popup').hide();
+                            $('#overPopup').show();
+                            $('.popup-mask').show();
+                        }
+                        Model.isMasterClass();
+                    }
+                })
+                stompClient.subscribe("/systemMessage", function (systemMessage) {
+                    Model.updateSystemMessage(systemMessage.body);
+                })
+                stompClient.subscribe("/status", function (status) {
+                    if (typeof userInfo !== "undefined" && userInfo.role === 0) {
+                        var viewer = app.getViewer();
+                        viewer.setState(JSON.parse(status.body));
+                    }
+                })
+            })
+        },
+
+        userInit: function () {
+            $.get('user', function (res) {
+                if (res.code == 'success') {
+                    if (!res.data) {
+                        $('#joinBim').show();
+                        $('.popup-mask').show();
+                    } else {
+                        Model.updateUserList();
+                        window.userInfo = res.data;
+                        Model.isMasterClass();
+                    }
+                    Model.clientInit();
+                    Model.getCurrentFile();
+                }
+            })
+        },
+
+        getCurrentFile: function () {
+            $.get('file/nonce', function (res) {
+                if (res.data === null) {
+                    return
+                }
+                if (res.data.currentFileId !== null) {
+                    Model.initializeBimfaceViewer(res.data.currentFileId, JSON.parse(res.data.currentStatus));
+                    Model.updateCurrentFileStyle(res.data.currentFileId);
+                } else {
+                    Model.initializeBimfaceViewer('450f1742');
+                    Model.updateCurrentFileStyle('450f1742');
+                }
+            })
+        },
+
+        updateCurrentFileStyle: function (fileId) {
+            $('.file-list li').each(function (i) {
+                if ($('.file-list li').eq(i).attr('data-id') == fileId) {
+                    $('.file-list li').eq(i).addClass('on');
+                } else {
+                    $('.file-list li').eq(i).removeClass('on');
+                }
+            })
+        },
+
+        updateUserList: function () {
+            $.get('user/list', function (res) {
+                if (res.code == 'success') {
+                    Model.updateUserDom(res.data);
+                }
+            })
+        },
+
+        updateUserDom: function (arr) {
+            $('.user-list').html('');
+            $('#userNum').html('（' + arr.length + '）');
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].role == 0) {
+                    var _dom = '<li>' + arr[i].name + '<i data-id=' + arr[i].id + '></i></li>'
+                } else {
+                    var _dom = '<li class="master" data-id="' + arr[i].id + '"><span>[主持人]</span>' + arr[i].name + '</li>'
+                }
+                $('.user-list').append(_dom);
+            }
+            var idArr = arr.map(function (t) {
+                return t.id
+            });
+            if (typeof userInfo !== "undefined" && userInfo !== null && !idArr.includes(userInfo.id)) {
+                userInfo = null;
+                alert("浏览器会话已经过期，请刷新页面");
+            }
+        },
+
+        updateMessage: function (obj) {
+            if (obj.user.id == userInfo.id) {
+                var _dom = '<li class="me"><div class="text"><i class="me"></i>' + obj.msg + '</div></li>'
+            } else {
+                var _dom = '<li><div class="name">' + obj.user.name + '</div><div class="text"><i class="o"></i>' + obj.msg + '</div></li>'
+            }
+            $('.chat').append(_dom);
+            Model.chatScroll();
+        },
+
+        updateSystemMessage: function (str) {
+            var _dom = '<li class="system"><span>' + str + '</span></li>'
+            $('.chat').append(_dom);
+            Model.chatScroll();
+        },
+
+        shareInit: function () {
+            $('#inviteBtn').click(function () {
+                $('#sharePopup').show();
+                $('.popup-mask').show();
+            })
+            $('#copyBtn').click(function () {
+                $('#shareUrl').select();
+                document.execCommand("Copy");
+                Model.closePopup();
+            })
+        },
+
+        isMasterStyle: function (obj, showPop) {
+            if (typeof userInfo === "undefined") {
+                return
+            }
+            var _oldRole = userInfo.role;
+            if (userInfo.id === obj.id) {
+                userInfo.role = 1;
+            } else {
+                userInfo.role = 0;
+                if (_oldRole == 1) {
+                    if (showPop) {
+                        $('.popup').hide();
+                        $('#overPopup').show();
+                        $('.popup-mask').show();
+                    } else {
+                        $('.popup').hide();
+                        $('.popup-mask').hide();
+                    }
+                }
+            }
+            Model.isMasterClass();
+        },
+
+        isMasterClass: function () {
+            if (typeof userInfo === "undefined") {
+                return
+            }
+            if (userInfo.role == 1) {
+                $('.file-list').addClass('isMaster');
+                $('.user-list').addClass('isMaster');
+                $('#successPopup').show();
+                $('.popup-mask').show();
+            } else {
+                $('.file-list').removeClass('isMaster');
+                $('.user-list').removeClass('isMaster');
+            }
+        },
+
+        initializeBimfaceViewer: function (fileId, fileStatus) {
+            $('#view').html('');
+            $.get('http://bimface.com/console/share/preview/viewtoken?token=' + fileId, function (res) {
+                if (res.code == 'success') {
+                    var viewToken = res.data;
+                    var options = new BimfaceSDKLoaderConfig();
+                    options.viewToken = viewToken;
+                    BimfaceSDKLoader.load(options, successCallback, failureCallback);
+
+                    function successCallback(viewMetaData) {
+                        if (viewMetaData.viewType == "dwgView") {
+                            var dom4Show = document.getElementById('view');
+                            var webAppConfig = new Glodon.Bimface.Application.WebApplication2DConfig();
+                            webAppConfig.domElement = dom4Show;
+                            window.app = new Glodon.Bimface.Application.WebApplication2D(webAppConfig);
+                            app.load(viewToken);
+                            if (fileStatus) {
+                                app.getViewer().setState(fileStatus);
+                            }
+                            Model.sendCameraInfo();
+                        } else if (viewMetaData.viewType == "3DView") {
+                            var dom4Show = document.getElementById('view');
+                            var webAppConfig = new Glodon.Bimface.Application.WebApplication3DConfig();
+                            webAppConfig.domElement = dom4Show;
+                            window.app = new Glodon.Bimface.Application.WebApplication3D(webAppConfig);
+                            app.addView(viewToken);
+                            app.addEventListener(Glodon.Bimface.Application.WebApplication3DEvent.ViewAdded, function () {
+                                app.render();
+                                if (fileStatus) {
+                                    app.getViewer().setState(fileStatus)
+                                }
+                                Model.sendCameraInfo();
+                            });
+
+                            // 监听添加view进行中的时间，可获取添加进度
+                            app.addEventListener(Glodon.Bimface.Application.WebApplication3DEvent.ViewLoading, function (progress) {
+                                console.log(progress);
+                            });
+                        }
+                    }
+
+                    function failureCallback(error) {
+                        console.log(error);
+                    };
+                }
+            })
+        },
+
+        sendCameraInfo: function () {
+            setInterval(Model.sendCameraStatus, 200);
+        },
+
+        sendCameraStatus: function () {
+            var viewer = app.getViewer();
+            var status = viewer.getCurrentState();
+            stompClient.send('/cameraStatus', {}, JSON.stringify(status));
+        },
+
+        updateModel: function (num) {
+            $('.file-list li').eq(num).addClass('on').siblings().removeClass('on');
+        },
+
+        chatScroll: function () {
+            $('.chat').scrollTop($('.chat')[0].scrollHeight);
+        }
+    }
+
+    window.onbeforeunload = onbeforeunload_handler;
+    window.onunload = onunload_handler;
+
+    function onbeforeunload_handler() {
+        if (userInfo.role === 1) {
+            return "您是主持人，确定退出么？";
+        }
+        return null;   //可以换成alert等具体操作
+    }
+
+    function onunload_handler() {
+        $.post("logout");
+        sleep(100);
+        return ""
+    }
+
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+
+    function EnterPress(event) { //传入 event
+        var code;
+        if (!event) event = window.event;
+        if (event.keyCode) code = event.keyCode; else if (event.which) code = event.which;
+        if (code === 13 && window.event) {
+            event.returnValue = false;
+            stompClient.send("/message", {}, $('#comment').val());
+            $('#comment').val('');
+        } else if (code === 13) {
+            event.preventDefault();
+        }
+    }
+</script>
+</body>
+</html>

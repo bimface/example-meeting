@@ -1,0 +1,318 @@
+
+.container {
+  padding:20px;
+  box-sizing: border-box;
+}
+.main {
+  position: fixed;
+  top:75px;
+  left:220px;
+  right:20px;
+  bottom:70px;
+  background-color: #fff;
+  box-shadow: 0 0 10px 1px #ddd;
+}
+
+.file-box, .user-box {
+  width:180px;
+  background-color: #fff;
+  box-shadow: 0 0 10px 1px #ddd;
+}
+.file-box .tit, .user-box .tit {
+  padding:0 20px;
+  line-height: 40px;
+  height: 40px;
+  background-color: #2c2c2c;
+  color:#fff;
+}
+.file-list {
+  padding:10px 0;
+}
+.file-list li, .user-list li {
+   line-height: 40px;
+   padding:0px 10px;
+   cursor: default;
+ }
+.file-list.isMaster li, .user-list.isMaster li {
+  cursor: pointer;
+}
+.user-list li {
+  padding:0px;
+  margin:0 10px;
+  border-bottom:1px solid #ddd;
+  box-sizing: border-box;
+  position: relative;
+}
+.user-list li.master span {
+  color:#11dab7;
+}
+.user-list li:not(.master) i {
+  display: none;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: url(../images/meeting_tranfer.png) no-repeat;
+  top:6px;
+  right:0;
+}
+.user-list.isMaster li:not(.master):hover {
+  color:#11dab7;
+}
+.user-list.isMaster li:not(.master):hover i {
+  display: block;
+}
+.file-list li.on, .file-list.isMaster li:hover {
+  background-color:#e7fbf7;
+  color:#11dab7;
+}
+.user-box {
+  margin-top:20px;
+}
+.user-list {
+  padding:10px 0;
+  overflow-y: auto;
+  border-bottom:1px solid #ddd;
+  box-sizing: border-box;
+}
+.apply {
+  height: 100px;
+  text-align: center;
+  padding:0 10px;
+}
+.apply .btn {
+  line-height: 34px;
+  height: 34px;
+  width: 100%;
+  margin-top:10px;
+}
+
+#view {
+  position: absolute;
+  top:0;
+  bottom:0;
+  right:240px;
+  left:0;
+}
+.side {
+  position: absolute;
+  width: 240px;
+  top:0;
+  bottom:0;
+  right:0;
+  border-left:1px solid #ddd;
+  box-sizing: border-box;
+  background-color: #f4f4f4;
+}
+.chat {
+  overflow-y: auto;
+  padding:10px;
+  box-sizing: border-box;
+}
+.chat li {
+  padding:10px 0 10px 40px;
+  text-align: left;
+  background: url(../images/meeting_user.png) no-repeat 0 10px;
+}
+.chat li .name {
+  font-size: 12px;
+  color:#999;
+}
+.chat li .text {
+  padding:5px;
+  border:1px solid #ddd;
+  border-radius: 3px;
+  display: inline-block;
+  background-color: #fff;
+  position: relative;
+  word-wrap:break-word;
+  word-break:break-all;
+}
+.chat li .text i.o {
+  position:absolute;
+  top:8px;
+  left:-12px;
+  display:block;
+  height:0;
+  width:0;
+  font-size: 0;
+  line-height: 0;
+  border-color:transparent #ddd transparent transparent;
+  border-style:dashed solid dashed dashed;
+  border-width:6px;
+}
+.chat li .text i.o:after {
+  content: '';
+  position:absolute;
+  top: -6px;
+  left: -5px;
+  display:block;
+  height:0;
+  width:0;
+  font-size: 0;
+  line-height: 0;
+  border-color:transparent #fff transparent transparent;
+  border-style:dashed solid dashed dashed;
+  border-width:6px;
+}
+.chat li.me {
+  padding:10px 40px 10px 0;
+  text-align: right;
+  background: url(../images/meeting_user_1.png) no-repeat right 10px;
+}
+.chat li.me .text {
+  color:#11dab7;
+  border:1px solid #11dab7;
+}
+.chat li .text i.me {
+  position:absolute;
+  top:8px;
+  right:-12px;
+  display:block;
+  height:0;
+  width:0;
+  font-size: 0;
+  line-height: 0;
+  border-color:transparent transparent transparent #11dab7;
+  border-style:dashed dashed dashed solid;
+  border-width:6px;
+}
+.chat li .text i.me:after {
+  content: '';
+  position:absolute;
+  top: -6px;
+  right: -5px;
+  display:block;
+  height:0;
+  width:0;
+  font-size: 0;
+  line-height: 0;
+  border-color:transparent transparent transparent #fff;
+  border-style:dashed dashed dashed solid;
+  border-width:6px;
+}
+.chat li.system {
+  padding:10px 0;
+  background: none;
+  text-align: center;
+  color:#f00;
+  border-radius: 4px;
+}
+.chat li.system span {
+  display: inline-block;
+  padding:5px 10px;
+  color: #f99d0b;
+  background-color: #dfdfdf;
+}
+.enter-box {
+  height: 150px;
+  border-top:1px solid #ddd;
+  box-sizing: border-box;
+  padding:10px;
+}
+.enter-box textarea {
+  width: 100%;
+  border:1px solid #ccc;
+  padding:10px;
+  box-sizing: border-box;
+  height:90px;
+  resize: none;
+}
+.enter-box a {
+  float: right;
+  margin-top:3px;
+}
+.enter-box .btnEmpty {
+  margin-right:10px;
+  margin-top:6px;
+  color:#999;
+}
+
+#transferName {
+  color:#11dab7;
+}
+
+.popup-mask {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.2);
+  top: 0;
+  left: 0;
+  z-index: 199;
+  display: none;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  z-index: 200
+}
+
+.popup .close {
+  float: right;
+  font-size: 20px;
+  color: #fff;
+  position: absolute;
+  right: 10px;
+  top: 4px;
+  cursor: pointer
+}
+
+.popup .close:hover {
+  text-decoration: none;
+  color: #0cf
+}
+
+.popup .tit {
+  background-color: #2c2c2c;
+  color: #fff;
+  line-height: 40px;
+  padding: 0 10px
+}
+
+.popup .content {
+  border: 1px solid #fff;
+  padding: 20px;
+  background-color: #fff;
+}
+.popup .content input {
+  padding:5px;
+  border:1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+.popup .content p {
+  padding:5px 0;
+}
+.popup .content .btn-box {
+  margin-top:20px;
+  text-align: center;
+}
+
+
+
+  /* Let's get this party started */
+::-webkit-scrollbar {
+  width: 8px;
+  height:8px;
+  position: relative;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+  -webkit-border-radius: 4px;
+  border-radius: 6px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  background: rgba(204,204,204,0.4);
+  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.15);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(204,204,204,0.3);
+}
